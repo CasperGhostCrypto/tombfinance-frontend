@@ -7,7 +7,7 @@ import { BigNumber, Contract, ethers, EventFilter } from 'ethers';
 import { decimalToBalance } from './ether-utils';
 import { TransactionResponse } from '@ethersproject/providers';
 import ERC20 from './ERC20';
-import { getFullDisplayBalance, getDisplayBalance, getBalance } from '../utils/formatBalance';
+import { getFullDisplayBalance, getDisplayBalance } from '../utils/formatBalance';
 import { getDefaultProvider } from '../utils/provider';
 import IUniswapV2PairABI from './IUniswapV2Pair.abi.json';
 import config, { bankDefinitions } from '../config';
@@ -755,7 +755,7 @@ export class TombFinance {
     const boughtBondsFilter = Treasury.filters.BoughtBonds();
     const redeemBondsFilter = Treasury.filters.RedeemedBonds();
 
-    let epochBlocksRanges = new Array();
+    let epochBlocksRanges: any[] = [];
     let masonryFundEvents = await Treasury.queryFilter(treasuryMasonryFundedFilter);
     var events: any[] = [];
     masonryFundEvents.forEach(function callback(value, index) {
@@ -847,6 +847,28 @@ export class TombFinance {
         token.address,
         parseUnits(amount, 18),
         lpToken.address,
+        SPOOKY_ROUTER_ADDR,
+        this.myAccount,
+      );
+    }
+  }
+
+  async zapOut(tokenName: string, lpName: string, amount: string): Promise<TransactionResponse> {
+    console.log({
+      tokenName,
+      lpName,
+      amount
+    })
+    const { zapper } = this.contracts;
+    const lpToken = this.externalTokens[lpName];
+    if (tokenName === FTM_TICKER) {
+      return await zapper.zapOut(lpToken.address, parseUnits(amount, 18), SPOOKY_ROUTER_ADDR, this.myAccount);
+    } else {
+      const token = tokenName === TOMB_TICKER ? this.TOMB : this.TSHARE;
+      return await zapper.zapOutToken(
+        lpToken.address,
+        parseUnits(amount, 18),
+        token.address,
         SPOOKY_ROUTER_ADDR,
         this.myAccount,
       );

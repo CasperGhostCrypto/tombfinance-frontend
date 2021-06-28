@@ -3,7 +3,7 @@ import useTombFinance from './useTombFinance';
 import { Bank } from '../tomb-finance';
 import useHandleTransactionReceipt from './useHandleTransactionReceipt';
 
-const useZap = (bank: Bank) => {
+const useZapIn = (bank: Bank) => {
   const tombFinance = useTombFinance();
   const handleTransactionReceipt = useHandleTransactionReceipt();
 
@@ -19,4 +19,4 @@ const useZap = (bank: Bank) => {
   return { onZap: handleZap };
 };
 
-export default useZap;
+export default useZapIn;

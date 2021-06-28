@@ -10,7 +10,8 @@ import TokenSymbol from '../../components/TokenSymbol';
 import useTombStats from '../../hooks/useTombStats';
 import useLpStats from '../../hooks/useLpStats';
 import useModal from '../../hooks/useModal';
-import useZap from '../../hooks/useZap';
+import useZapIn from '../../hooks/useZapIn';
+import useZapOut from '../../hooks/useZapOut';
 import useBondStats from '../../hooks/useBondStats';
 import usetShareStats from '../../hooks/usetShareStats';
 import useTotalValueLocked from '../../hooks/useTotalValueLocked';
@@ -20,7 +21,8 @@ import { tomb as tombProd, tShare as tShareProd } from '../../tomb-finance/deplo
 import MetamaskFox from '../../assets/img/metamask-fox.svg';
 
 import { Box, Button, Card, CardContent, Grid, Paper } from '@material-ui/core';
-import ZapModal from '../Bank/components/ZapModal';
+import ZapInModal from '../Bank/components/ZapInModal';
+import ZapOutModal from '../Bank/components/ZapOutModal';
 
 import { makeStyles } from '@material-ui/core/styles';
 import useTombFinance from '../../hooks/useTombFinance';
@@ -98,15 +100,18 @@ const Home = () => {
   );
   const tBondTotalSupply = useMemo(() => (tBondStats ? String(tBondStats.totalSupply) : null), [tBondStats]);
 
-  const tombLpZap = useZap({ depositTokenName: 'TOMB-FTM-LP' });
-  const tshareLpZap = useZap({ depositTokenName: 'TSHARE-FTM-LP' });
+  const tombLpZapIn = useZapIn({ depositTokenName: 'TOMB-FTM-LP' });
+  const tshareLpZapIn = useZapIn({ depositTokenName: 'TSHARE-FTM-LP' });
+
+  const tombLpZapOut = useZapOut({ depositTokenName: 'TOMB-FTM-LP' });
+  const tshareLpZapOut = useZapOut({ depositTokenName: 'TSHARE-FTM-LP' });
 
   const [onPresentTombZap, onDissmissTombZap] = useModal(
-    <ZapModal
+    <ZapInModal
       decimals={18}
       onConfirm={(zappingToken, tokenName, amount) => {
         if (Number(amount) <= 0 || isNaN(Number(amount))) return;
-        tombLpZap.onZap(zappingToken, tokenName, amount);
+        tombLpZapIn.onZap(zappingToken, tokenName, amount);
         onDissmissTombZap();
       }}
       tokenName={'TOMB-FTM-LP'}
@@ -114,12 +119,36 @@ const Home = () => {
   );
 
   const [onPresentTshareZap, onDissmissTshareZap] = useModal(
-    <ZapModal
+    <ZapInModal
       decimals={18}
       onConfirm={(zappingToken, tokenName, amount) => {
         if (Number(amount) <= 0 || isNaN(Number(amount))) return;
-        tshareLpZap.onZap(zappingToken, tokenName, amount);
+        tshareLpZapIn.onZap(zappingToken, tokenName, amount);
         onDissmissTshareZap();
+      }}
+      tokenName={'TSHARE-FTM-LP'}
+    />,
+  );
+
+  const [onPresentTombZapOut, onDissmissTombZapOut] = useModal(
+    <ZapOutModal
+      decimals={18}
+      onConfirm={(zappingToken, tokenName, amount) => {
+        if (Number(amount) <= 0 || isNaN(Number(amount))) return;
+        tombLpZapOut.onZap(zappingToken, tokenName, amount);
+        onDissmissTombZapOut();
+      }}
+      tokenName={'TOMB-FTM-LP'}
+    />,
+  );
+
+  const [onPresentTshareZapOut, onDissmissTshareZapOut] = useModal(
+    <ZapOutModal
+      decimals={18}
+      onConfirm={(zappingToken, tokenName, amount) => {
+        if (Number(amount) <= 0 || isNaN(Number(amount))) return;
+        tshareLpZapOut.onZap(zappingToken, tokenName, amount);
+        onDissmissTshareZapOut();
       }}
       tokenName={'TSHARE-FTM-LP'}
     />,
@@ -307,6 +336,9 @@ const Home = () => {
                 </CardIcon>
               </Box>
               <Box mt={2}>
+                <Button onClick={onPresentTombZapOut} variant="contained" style={{ marginRight: '10px' }}>
+                  Zap Out
+                </Button>
                 <Button color="primary" onClick={onPresentTombZap} variant="contained">
                   Zap In
                 </Button>
@@ -335,6 +367,9 @@ const Home = () => {
                 </CardIcon>
               </Box>
               <Box mt={2}>
+                <Button onClick={onPresentTshareZapOut} variant="contained" style={{ marginRight: '10px' }}>
+                  Zap Out
+                </Button>
                 <Button color="primary" onClick={onPresentTshareZap} variant="contained">
                   Zap In
                 </Button>

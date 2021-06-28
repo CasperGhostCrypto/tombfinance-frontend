@@ -16,7 +16,7 @@ import { ThemeContext } from 'styled-components';
 import useApprove, { ApprovalState } from '../../../hooks/useApprove';
 import useModal from '../../../hooks/useModal';
 import useStake from '../../../hooks/useStake';
-import useZap from '../../../hooks/useZap';
+import useZapIn from '../../../hooks/useZapIn';
 import useStakedBalance from '../../../hooks/useStakedBalance';
 import useStakedTokenPriceInDollars from '../../../hooks/useStakedTokenPriceInDollars';
 import useTokenBalance from '../../../hooks/useTokenBalance';
@@ -26,7 +26,7 @@ import { getDisplayBalance } from '../../../utils/formatBalance';
 
 import DepositModal from './DepositModal';
 import WithdrawModal from './WithdrawModal';
-import ZapModal from './ZapModal';
+import ZapInModal from './ZapInModal';
 import TokenSymbol from '../../../components/TokenSymbol';
 import { Bank } from '../../../tomb-finance';
 
@@ -49,7 +49,7 @@ const Stake: React.FC<StakeProps> = ({ bank }) => {
     Number(tokenPriceInDollars) * Number(getDisplayBalance(stakedBalance, bank.depositToken.decimal))
   ).toFixed(2);
   const { onStake } = useStake(bank);
-  const { onZap } = useZap(bank);
+  const { onZap } = useZapIn(bank);
   const { onWithdraw } = useWithdraw(bank);
 
   const [onPresentDeposit, onDismissDeposit] = useModal(
@@ -66,7 +66,7 @@ const Stake: React.FC<StakeProps> = ({ bank }) => {
   );
 
   const [onPresentZap, onDissmissZap] = useModal(
-    <ZapModal
+    <ZapInModal
       decimals={bank.depositToken.decimal}
       onConfirm={(zappingToken, tokenName, amount) => {
         if (Number(amount) <= 0 || isNaN(Number(amount))) return;
